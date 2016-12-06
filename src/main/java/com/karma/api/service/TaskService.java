@@ -15,6 +15,7 @@ public class TaskService {
 	@Autowired
 	private SessionFactory sessionFactory;
 	
+	//test function for hibernate session flow.
 	public void go(){
 		MiniTask tk = new MiniTask();
 		tk.setMt_status(false);
