@@ -1,10 +1,15 @@
 package com.karma.api.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import com.karma.api.dao.subs.MiniTask;
 
@@ -17,7 +22,8 @@ public class TaskDao {
 	private String t_title;
 	private String t_author;
 	
-	private ArrayList<MiniTask> t_miniTaskList;
+	@ElementCollection(fetch=FetchType.EAGER)
+	private Collection<MiniTask> t_miniTaskList = new ArrayList<MiniTask>();
 
 	/*public TaskDao(String t_id, String t_title, String t_author, ArrayList<MiniTask> t_miniTaskList) {
 		super();
@@ -55,11 +61,11 @@ public class TaskDao {
 		this.t_author = t_author;
 	}
 
-	public ArrayList<MiniTask> getT_miniTaskList() {
+	public Collection<MiniTask> getT_miniTaskList() {
 		return t_miniTaskList;
 	}
 
-	public void setT_miniTaskList(ArrayList<MiniTask> t_miniTaskList) {
+	public void setT_miniTaskList(Collection<MiniTask> t_miniTaskList) {
 		this.t_miniTaskList = t_miniTaskList;
 	}
 	

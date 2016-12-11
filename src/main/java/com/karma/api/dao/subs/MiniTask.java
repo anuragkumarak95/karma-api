@@ -1,15 +1,16 @@
 package com.karma.api.dao.subs;
 
+import java.io.Serializable;
+
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-@Entity
-public class MiniTask {
+@Embeddable
+public class MiniTask{
 
-	@Id @GeneratedValue
-	private int mt_id;
-	
+		
 	private String mt_content;
 	private boolean mt_status;
 	
@@ -26,12 +27,7 @@ public class MiniTask {
 		
 	}
 	
-	public int getMt_id() {
-		return mt_id;
-	}
-	public void setMt_id(int mt_id) {
-		this.mt_id = mt_id;
-	}
+
 	public String getMt_content() {
 		return mt_content;
 	}

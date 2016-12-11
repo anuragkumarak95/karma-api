@@ -1,15 +1,16 @@
-package com.karma.api.webapi.responses;
+package com.karma.api.webapi.resources;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.karma.api.dao.TaskDao;
 
-public class TaskListResponse {
+public class TaskListResponse{
 	
 	private String status;
 	private String error;
 	private int task_count;
-	private ArrayList<TaskDao> taskList;
+	private List<TaskDao> taskList;
 	
 	public TaskListResponse(){
 		
@@ -39,12 +40,12 @@ public class TaskListResponse {
 		this.task_count = task_count;
 	}
 
-	public ArrayList<TaskDao> getTaskList() {
+	public List<TaskDao> getTaskList() {
 		return taskList;
 	}
 
 
-	public void setTaskList(ArrayList<TaskDao> taskList) {
+	public void setTaskList(List<TaskDao> taskList) {
 		this.taskList = taskList;
 	}
 	
@@ -60,7 +61,7 @@ public class TaskListResponse {
 		return this;
 	}
 	
-	public TaskListResponse addTaskList(ArrayList<TaskDao> taskList) {
+	public TaskListResponse addTaskList(List<TaskDao> taskList) {
 		this.taskList = taskList;
 		return this;
 	}
@@ -69,6 +70,5 @@ public class TaskListResponse {
 		this.task_count = task_count;
 		return this;
 	}
-	
 
 }
