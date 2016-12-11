@@ -1,5 +1,6 @@
 package com.karma.api.webapi;
 
+import java.awt.MediaTracker;
 import java.util.ArrayList;
 
 import org.hibernate.SessionFactory;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +30,10 @@ import com.karma.api.webapi.resources.jobs.TaskAddJob;
 public class WebService {
 	
 	@Autowired TaskService taskService;
+	
+	private TaskListResponse unauthReport = new TaskListResponse().addStatus("FAILED").addError("Un-Authorized Access.");
+	private String authToken = "hello123";
+	
 	
 	@RequestMapping(value="/hi",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
 	public TaskListResponse hi(){
@@ -61,23 +67,32 @@ public class WebService {
 	}
 	
 	@RequestMapping(value="/get/{t_auth}/{t_id}",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
-	public TaskListResponse getTaskService(@PathVariable("t_auth") String t_auth,@PathVariable("t_id") int t_id){
-		return this.taskService.getTask(t_id);
+	public TaskListResponse getTaskService(@PathVariable("t_auth") String t_auth,@PathVariable("t_id") int t_id,@RequestHeader("auth") String auth ){
+		return auth_first(auth, this.taskService.getTask(t_id));
 	}
 	
-	@RequestMapping(value="/get/{t_auth}",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
-	public TaskListResponse getTaskByAuthorService(@PathVariable("t_auth") String t_auth){
-		return this.taskService.getTaskByAuthor(t_auth);
+	@RequestMapping(value="/get/{t_auth}",
+			method=RequestMethod.GET,
+			produces=MediaType.APPLICATION_JSON_VALUE)
+	public TaskListResponse getTaskByAuthorService(@PathVariable("t_auth") String t_auth
+			,@RequestHeader("auth") String auth ){
+		return auth_first(auth, this.taskService.getTaskByAuthor(t_auth));
+	}
+	
+	@RequestMapping(value="/add",method=RequestMethod.PUT,consumes=MediaType.APPLICATION_JSON_VALUE,
+			produces=MediaType.APPLICATION_JSON_VALUE)
+	public TaskListResponse addTaskService(@RequestBody TaskDao task,@RequestHeader("auth") String auth ){
+		return auth_first(auth, this.taskService.addTask(task));
 	}
 	
 	@RequestMapping(value="/delete/{t_id}",method=RequestMethod.DELETE,produces=MediaType.APPLICATION_JSON_VALUE)
-	public TaskListResponse deleteTaskService(@PathVariable("t_id") int t_id){
-		return this.taskService.deleteTask(t_id);
+	public TaskListResponse deleteTaskService(@PathVariable("t_id") int t_id,@RequestHeader("auth") String auth ){
+		return auth_first(auth, this.taskService.deleteTask(t_id));
 	}
 	
 	@RequestMapping(value="/update",method=RequestMethod.PUT,consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)	
-	public TaskListResponse updateTaskService(@RequestBody TaskDao task){
-		return this.taskService.updateTask(task);
+	public TaskListResponse updateTaskService(@RequestBody TaskDao task,@RequestHeader("auth") String auth ){
+		return auth_first(auth, this.taskService.updateTask(task));
 	}
 	
 	
@@ -85,5 +100,14 @@ public class WebService {
 	@RequestMapping(value="/pool",method=RequestMethod.PUT,consumes=MediaType.APPLICATION_JSON_VALUE)
 	public void JobPoolManager(@RequestBody JobPool pool){
 		this.taskService.jobPool(pool);
+	}
+	
+	private TaskListResponse auth_first(String auth,TaskListResponse response){
+		if(auth.equals(authToken)){
+			return response;
+		}
+		else{
+			return unauthReport;
+		}
 	}
 }
